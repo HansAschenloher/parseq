@@ -48,6 +48,8 @@ def _get_model_class(key):
         from .abinet.system import ABINet as ModelClass
     elif 'crnn' in key:
         from .crnn.system import CRNN as ModelClass
+    elif 'myparseq' in key:
+        from .myparseq.system import MyPARSeq as ModelClass
     elif 'parseq' in key:
         from .parseq.system import PARSeq as ModelClass
     elif 'trba' in key:
@@ -56,6 +58,7 @@ def _get_model_class(key):
         from .trba.system import TRBC as ModelClass
     elif 'vitstr' in key:
         from .vitstr.system import ViTSTR as ModelClass
+
     else:
         raise InvalidModelError(f"Unable to find model class for '{key}'")
     return ModelClass

@@ -3,6 +3,8 @@ from strhub.models.utils import create_model
 
 dependencies = ['torch', 'pytorch_lightning', 'timm']
 
+def myparseq(pretrained: bool = False, decode_ar: bool = True, refine_iters: int = 1, **kwargs):
+    return create_model('myparseq', pretrained, decode_ar=decode_ar, refine_iters=refine_iters, **kwargs)
 
 def parseq_tiny(pretrained: bool = False, decode_ar: bool = True, refine_iters: int = 1, **kwargs):
     """
