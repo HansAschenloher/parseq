@@ -109,6 +109,9 @@ class Encoder(VisionTransformer):
                          mlp_ratio=mlp_ratio, qkv_bias=qkv_bias, drop_rate=drop_rate, attn_drop_rate=attn_drop_rate,
                          drop_path_rate=drop_path_rate, embed_layer=embed_layer,
                          num_classes=0, global_pool='', class_token=False)  # these disable the classifier head
+        self.depth = depth
+        self.num_heads = num_heads
+        self.mlp_ratio = mlp_ratio
 
     def forward(self, x):
         # Return all tokens

@@ -80,15 +80,16 @@ def main(config: DictConfig):
     # If specified, use pretrained weights to initialize the model
     if config.pretrained is not None:
         model.load_state_dict(get_pretrained_weights(config.pretrained))
-        model = MyPARSeq.fromPARSeq(model)
-        #for param in model.parameters():
-        #    param.requires_grad = False
+        for param in model.parameters():
+            param.requires_grad = False
 
+        model = MyPARSeq.fromPARSeq(model)
         model.encoder.requires_grad_(True)
 
 
 
-    print(summarize(model, max_depth=1 if model.hparams.name.startswith('parseq') else 2))
+    print(summarize(model, max_depth=1 if model.hparams.name.startswith('myparseq') else 2))
+    print(model.eval())
 
     datamodule: SceneTextDataModule = hydra.utils.instantiate(config.data)
     datamodule.img_size = [32*4, 128*4]
@@ -104,6 +105,7 @@ def main(config: DictConfig):
     trainer: Trainer = hydra.utils.instantiate(config.trainer, logger=TensorBoardLogger(cwd, '', '.'),
                                                strategy=trainer_strategy, enable_model_summary=False,
                                                callbacks=[checkpoint, swa])
+    print(type(model))
     trainer.fit(model, datamodule=datamodule, ckpt_path=config.ckpt_path)
 
 

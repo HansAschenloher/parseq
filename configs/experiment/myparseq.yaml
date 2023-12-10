@@ -1,6 +1,5 @@
 defaults:
-  - override /model: parseq
+  - override /model: myparseq
 
 model:
   name: myparseq
-  _target_: strhub.models.myparseq.system.MyPARSeq

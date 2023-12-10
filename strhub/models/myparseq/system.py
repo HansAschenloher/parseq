@@ -37,14 +37,22 @@ class MyPARSeq(PARSeq):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        channels = 64
+        encoder_in_chans = 5
         self.preencoder = nn.Sequential(
-            nn.Conv2d(in_channels=3, out_channels=32, kernel_size=(3,3), stride=1, padding=1, dilation=1),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=(2,2), stride=2, dilation=1),
-            nn.Conv2d(in_channels=32, out_channels=3, kernel_size=(3, 3), stride=1, padding=1, dilation=1,),
-            nn.ReLU(inplace=True),
+            nn.Conv2d(in_channels=3, out_channels=channels, kernel_size=(3, 3), stride=1, padding=1, dilation=1),
+            nn.GELU(),
+            #nn.BatchNorm2d(channels),
+            nn.MaxPool2d(kernel_size=(2, 2), stride=2, dilation=1),
+            nn.Conv2d(in_channels=channels, out_channels=encoder_in_chans, kernel_size=(3, 3), stride=1, padding=1,
+                      dilation=1, ),
+            nn.GELU(),
+            #nn.BatchNorm2d(encoder_in_chans),
             nn.MaxPool2d(kernel_size=(2, 2), stride=2, dilation=1),
         )
+
+        self.encoder = Encoder(self.encoder.patch_embed.img_size, self.encoder.patch_embed.patch_size,
+                               embed_dim=self.encoder.embed_dim, in_chans=encoder_in_chans)
 
     @classmethod
     def fromPARSeq(cls, parseq: PARSeq):
@@ -53,9 +61,8 @@ class MyPARSeq(PARSeq):
         return parseq
 
     def forward(self, images: Tensor, max_length: Optional[int] = None) -> Tensor:
-       x = self.preencoder(images)
-       return super().forward(x, max_length=max_length)
-
+        x = self.preencoder(images)
+        return super().forward(x, max_length=max_length)
 
     def training_step(self, batch, batch_idx) -> STEP_OUTPUT:
         images, labels = batch
@@ -89,4 +96,3 @@ class MyPARSeq(PARSeq):
 
         self.log('loss', loss)
         return loss
-

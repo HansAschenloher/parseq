@@ -48,6 +48,11 @@ class PARSeq(CrossEntropySystem):
         self.decode_ar = decode_ar
         self.refine_iters = refine_iters
 
+
+        self.enc_depth = enc_depth
+        self.enc_num_heads = enc_num_heads
+        self.enc_mlp_ratio = enc_mlp_ratio
+
         self.encoder = Encoder(img_size, patch_size, embed_dim=embed_dim, depth=enc_depth, num_heads=enc_num_heads,
                                mlp_ratio=enc_mlp_ratio)
         decoder_layer = DecoderLayer(embed_dim, dec_num_heads, embed_dim * dec_mlp_ratio, dropout)
