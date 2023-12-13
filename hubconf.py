@@ -6,6 +6,9 @@ dependencies = ['torch', 'pytorch_lightning', 'timm']
 def myparseq(pretrained: bool = False, decode_ar: bool = True, refine_iters: int = 1, **kwargs):
     return create_model('myparseq', pretrained, decode_ar=decode_ar, refine_iters=refine_iters, **kwargs)
 
+def loraparseq(pretrained: bool = False, decode_ar: bool = True, refine_iters: int = 1, **kwargs):
+    return create_model('loraparseq', pretrained, decode_ar=decode_ar, refine_iters=refine_iters, **kwargs)
+
 def parseq_tiny(pretrained: bool = False, decode_ar: bool = True, refine_iters: int = 1, **kwargs):
     """
     PARSeq tiny model (img_size=128x32, patch_size=8x4, d_model=192)

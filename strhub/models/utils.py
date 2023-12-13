@@ -50,6 +50,8 @@ def _get_model_class(key):
         from .crnn.system import CRNN as ModelClass
     elif 'myparseq' in key:
         from .myparseq.system import MyPARSeq as ModelClass
+    elif 'loraparseq' in key:
+        from .loraparseq.system import LoraPARSeq as ModelClass
     elif 'parseq' in key:
         from .parseq.system import PARSeq as ModelClass
     elif 'trba' in key:

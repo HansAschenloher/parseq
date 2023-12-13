@@ -31,30 +31,39 @@ from strhub.models.base import CrossEntropySystem
 from strhub.models.utils import init_weights
 from .modules import DecoderLayer, Decoder, Encoder, TokenEmbedding
 from ..parseq.system import PARSeq
+from .lora.lora import LoRA_ViT_timm, LoRA_ViT
+import sys
+sys.path.append('./lora/')
 
 
-class MyPARSeq(PARSeq):
+class LoraPARSeq(PARSeq):
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        # super().__init__(**kwargs)
         channels = 32
-        encoder_in_chans = 3
+        encoder_in_chans = 1
         self.preencoder = nn.Sequential(
             nn.Conv2d(in_channels=3, out_channels=channels, kernel_size=(3, 3), stride=1, padding=1, dilation=1),
             nn.GELU(),
+            # nn.BatchNorm2d(channels),
             nn.MaxPool2d(kernel_size=(2, 2), stride=2, dilation=1),
+
             nn.Conv2d(in_channels=channels, out_channels=encoder_in_chans, kernel_size=(3, 3), stride=1, padding=1,
                       dilation=1, ),
             nn.GELU(),
+            # nn.BatchNorm2d(encoder_in_chans),
             nn.MaxPool2d(kernel_size=(2, 2), stride=2, dilation=1),
         )
 
         self.encoder = Encoder(self.encoder.patch_embed.img_size, self.encoder.patch_embed.patch_size,
                                embed_dim=self.encoder.embed_dim, in_chans=encoder_in_chans)
 
+        self.encoder = LoRA_ViT_timm(vit_model=self.encoder, r=2)
+        #self.encoder = LoRA_ViT(vit_model=self.encoder, r=2)
+
     @classmethod
     def fromPARSeq(cls, parseq: PARSeq):
-        parseq.__class__ = MyPARSeq
+        parseq.__class__ = LoraPARSeq
         parseq.__init__()
         return parseq
 
